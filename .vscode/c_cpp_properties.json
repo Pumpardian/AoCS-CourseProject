@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/include/qt5/**",
+                "/usr/include/qt5/QtCore",
+                "/usr/include/qt5/QtGui",
+                "/usr/include/qt5/QtWidgets",
+                "/usr/include/qt5/QtCharts",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
