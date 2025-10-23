@@ -176,7 +176,7 @@ void Benchmark::Run(int mode)
         {
             testValues.push_back(n);
         }
-        for (long long n = 1000000; n <= 2000000; n += 100000)
+        for (long long n = 1000000; n <= 5000000; n += 100000)
         {
             testValues.push_back(n);
         }
@@ -202,6 +202,7 @@ void Benchmark::Run(int mode)
             return;
     }
 
+    results->clear();
     long long total = testValues.size();
     for (long long i = 0; i < total;)
     {
