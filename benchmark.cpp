@@ -117,6 +117,133 @@ void Benchmark::countSort_OMP_iGPU(vector<unsigned long long>& arr)
     }
 }
 
+/*void Benchmark::countSort_iGPU(vector<unsigned long long>& arr)
+{
+    unsigned long long max = *max_element(arr.begin(), arr.end());
+    auto size = arr.size();
+    vector<unsigned long long> output(size);
+    
+    cl_platform_id platform;
+    cl_device_id device;
+    cl_context context;
+    cl_command_queue queue;
+    cl_program program;
+    cl_kernel kernels[3];
+    cl_mem buffers[3];
+    cl_int ret;
+
+    // Setup
+    clGetPlatformIDs(1, &platform, NULL);
+    clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
+    context = clCreateContext(NULL, 1, &device, NULL, NULL, &ret);
+    queue = clCreateCommandQueueWithProperties(context, device, 0, &ret);
+
+    // Buffers
+    buffers[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
+                               size * sizeof(unsigned long long), arr.data(), &ret);
+    buffers[1] = clCreateBuffer(context, CL_MEM_READ_WRITE, 
+                               (max + 1) * sizeof(unsigned long long), NULL, &ret);
+    buffers[2] = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
+                               size * sizeof(unsigned long long), NULL, &ret);
+
+    // Initialize count buffer to zero
+    unsigned long long zero = 0;
+    clEnqueueFillBuffer(queue, buffers[1], &zero, sizeof(zero), 0, 
+                       (max + 1) * sizeof(unsigned long long), 0, NULL, NULL);
+
+    // Optimized kernel source - PARALLEL scatter
+    const char* source = R"(
+        __kernel void histogram(__global unsigned long long* arr, 
+                               __global unsigned long long* count, 
+                               unsigned long long size) {
+            int i = get_global_id(0); 
+            if (i < size) atomic_inc(&count[arr[i]]);
+        }
+        
+        __kernel void prefix_sum(__global unsigned long long* count, 
+                                unsigned long long max) {
+            int i = get_global_id(0) + 1; 
+            if (i <= max) count[i] += count[i-1];
+        }
+        
+        // OPTIMIZED: Parallel scatter using atomic operations
+        __kernel void scatter_optimized(__global unsigned long long* arr,
+                                       __global unsigned long long* count, 
+                                       __global unsigned long long* output, 
+                                       unsigned long long size) {
+            int i = get_global_id(0); 
+            if (i < size) {
+                unsigned long long value = arr[i];
+                unsigned long long position = atomic_dec(&count[value]);
+                output[position - 1] = value;
+            }
+        }
+        
+        // ALTERNATIVE: Even faster for small max values
+        __kernel void scatter_parallel(__global unsigned long long* count, 
+                                      __global unsigned long long* output, 
+                                      unsigned long long max,
+                                      unsigned long long size) {
+            int i = get_global_id(0); 
+            if (i <= max) {
+                unsigned long long start = (i == 0) ? 0 : count[i-1];
+                unsigned long long end = count[i];
+                unsigned long long count_val = end - start;
+                
+                // Parallel fill for this value
+                for (unsigned long long j = get_global_id(0); j < count_val; j += get_global_size(0)) {
+                    output[start + j] = i;
+                }
+            }
+        }
+    )";
+
+    // Build program
+    program = clCreateProgramWithSource(context, 1, &source, NULL, &ret);
+    clBuildProgram(program, 1, &device, NULL, NULL, NULL);
+    
+    const char* kernel_names[] = {"histogram", "prefix_sum", "scatter_parallel"};
+    size_t global_sizes[] = {size, max, size};  // All kernels now fully parallel
+    
+    for (int i = 0; i < 3; i++) {
+        kernels[i] = clCreateKernel(program, kernel_names[i], &ret);
+        
+        if (i == 0) { // histogram
+            clSetKernelArg(kernels[i], 0, sizeof(cl_mem), &buffers[0]);
+            clSetKernelArg(kernels[i], 1, sizeof(cl_mem), &buffers[1]);
+            clSetKernelArg(kernels[i], 2, sizeof(unsigned long long), &size);
+        }
+        else if (i == 1) { // prefix_sum
+            clSetKernelArg(kernels[i], 0, sizeof(cl_mem), &buffers[1]);
+            clSetKernelArg(kernels[i], 1, sizeof(unsigned long long), &max);
+        }
+        else { // scatter_optimized
+            clSetKernelArg(kernels[i], 0, sizeof(cl_mem), &buffers[0]);
+            clSetKernelArg(kernels[i], 1, sizeof(cl_mem), &buffers[1]);
+            clSetKernelArg(kernels[i], 2, sizeof(cl_mem), &buffers[2]);
+            clSetKernelArg(kernels[i], 3, sizeof(unsigned long long), &size);
+        }
+        
+        clEnqueueNDRangeKernel(queue, kernels[i], 1, NULL, &global_sizes[i], NULL, 0, NULL, NULL);
+    }
+
+    // Get results
+    clEnqueueReadBuffer(queue, buffers[2], CL_TRUE, 0, 
+                       size * sizeof(unsigned long long), output.data(), 0, NULL, NULL);
+
+    // Cleanup
+    for (auto k : kernels) clReleaseKernel(k);
+    for (auto b : buffers) clReleaseMemObject(b);
+    clReleaseProgram(program);
+    clReleaseCommandQueue(queue);
+    clReleaseContext(context);
+}*/
+
+void Benchmark::countSort_iGPU(vector<unsigned long long>& arr)
+{
+    openCLInterface->countSort_iGPU(arr);
+}
+
 long long Benchmark::test(void(Benchmark::*solution)(vector<unsigned long long>&), int size, int iterations, bool debug)
 {
     vector<unsigned long long> arr = generateArray(size);
@@ -195,7 +322,7 @@ void Benchmark::Run(int mode)
             results = &multiCoreResults;
             break;
         case BenchmarkMode::iGPU:
-            function = &Benchmark::countSort_OMP_iGPU;
+            function = &Benchmark::countSort_iGPU;
             results = &iGPUResults;
             break;
         default:

@@ -1,17 +1,12 @@
 #ifndef BENCHMARK_H
 #define BENCHMARK_H
 
-#include <iostream>
-#include <vector>
-#include <chrono>
+#include <openclinterface.h>
 #include <iomanip>
 #include <fstream>
-#include <algorithm>
 #include <omp.h>
 
 #include <QMessageBox>
-
-using namespace std;
 #define ITERATIONS 50
 
 enum BenchmarkMode
@@ -25,6 +20,8 @@ class Benchmark : public QObject
 {
     Q_OBJECT
 
+    OpenCLInterface *openCLInterface;
+
     vector<long long> testValues;
     vector<long long> singleCoreResults;
     vector<long long> multiCoreResults;
@@ -35,10 +32,22 @@ class Benchmark : public QObject
     void countSort(vector<unsigned long long>& arr);
     void countSort_OMP(vector<unsigned long long>& arr);
     void countSort_OMP_iGPU(vector<unsigned long long>& arr);
+    void countSort_iGPU(vector<unsigned long long>& arr);
     
     long long test(void(Benchmark::*solution)(vector<unsigned long long>&), int size, int iterations, bool debug = false);
     
 public:
+    Benchmark()
+    {
+        openCLInterface = new OpenCLInterface();
+    }
+
+    ~Benchmark()
+    {
+        delete openCLInterface;
+        openCLInterface = nullptr;
+    }
+
     void Run(int mode);
     void ExportResults(string filename);
     tuple<vector<long long>*, vector<long long>*, vector<long long>*, vector<long long>*> GetResults();
