@@ -1,0 +1,1 @@
+Excel connected data from folders by path on my laptop, you may need to refresh data connections because of this
