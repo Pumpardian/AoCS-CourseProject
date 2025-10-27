@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
         this, &MainWindow::onProgressUpdated);
 
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    chartView = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -83,8 +84,11 @@ void MainWindow::updateChart()
 
     chart->setTitle("Benchmark Results");
 
-    delete chartView;
-    ui->verticalLayout_6->removeWidget(chartView);
+    if (chartView != nullptr)
+    {
+        ui->verticalLayout_6->removeWidget(chartView);
+        delete chartView;
+    }
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     ui->verticalLayout_6->addWidget(chartView);

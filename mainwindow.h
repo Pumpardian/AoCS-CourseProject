@@ -29,8 +29,6 @@ private:
     QChartView *chartView;
     Benchmark *benchmark;
     QFutureWatcher<void> futureWatcher;
-
-    void setupChartView();
     
     void updateTable();
     void updateChart();

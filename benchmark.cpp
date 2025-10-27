@@ -47,7 +47,7 @@ void Benchmark::countSort_OMP(vector<unsigned long long>& arr)
     auto size = arr.size();
 
     vector<unsigned long long> count(max + 1, 0);
-    #pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for
     for (int i = 0; i < size; ++i)
     {
         ++count[arr[i]];
@@ -59,7 +59,7 @@ void Benchmark::countSort_OMP(vector<unsigned long long>& arr)
     }
     
     vector<unsigned long long> output(size);
-    #pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for
     for (int i = 0; i <= max; ++i)
     {
         int start = (i == 0) ? 0 : count[i - 1];
