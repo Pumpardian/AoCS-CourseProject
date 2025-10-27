@@ -12,20 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(benchmark, &Benchmark::OnProgressUpdate,
         this, &MainWindow::onProgressUpdated);
 
-    setupChartView();
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::setupChartView()
-{
-    chartView = new QChartView(new QChart());
-    chartView->setRenderHint(QPainter::Antialiasing);
-    ui->verticalLayout_6->addWidget(chartView);
 }
 
 void MainWindow::updateChart()
@@ -146,7 +138,6 @@ void MainWindow::updateTable()
 
 void MainWindow::on_pushButton_Start_clicked()
 {
-    QThread* thread = new QThread;
     QFuture<void> future;
 
     if (ui->radioButton_SingleCore->isChecked())

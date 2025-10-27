@@ -31,7 +31,6 @@ class Benchmark : public QObject
     
     void countSort(vector<unsigned long long>& arr);
     void countSort_OMP(vector<unsigned long long>& arr);
-    void countSort_OMP_iGPU(vector<unsigned long long>& arr);
     void countSort_iGPU(vector<unsigned long long>& arr);
     
     long long test(void(Benchmark::*solution)(vector<unsigned long long>&), int size, int iterations, bool debug = false);

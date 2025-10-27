@@ -21,8 +21,6 @@ public:
 private slots:
     void on_pushButton_Start_clicked();
     void on_pushButton_Export_clicked();
-
-public slots:
     void onBenchmarkFinished();
     void onProgressUpdated(double progress);
 
