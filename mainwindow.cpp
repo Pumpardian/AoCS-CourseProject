@@ -6,14 +6,13 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->radioButton_SingleCore->setChecked(true);
+    ui->radioButton_SingleCore->setChecked(true);  
+	ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    chartView = nullptr;
   
     benchmark = new Benchmark();
     connect(benchmark, &Benchmark::OnProgressUpdate,
         this, &MainWindow::onProgressUpdated);
-
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    chartView = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -96,12 +95,12 @@ void MainWindow::updateChart()
 
 void MainWindow::updateTable()
 {
-    ui->tableWidget->clear();
-    ui->tableWidget->setColumnCount(4);
-    ui->tableWidget->setHorizontalHeaderLabels({"Test Size (n)", "Single Core (µs)", "Multi Core (µs)", "iGPU (µs)"});
-    
     auto [n, sc, mc, igpu] = benchmark->GetResults();
     
+	ui->tableWidget->clear();
+    ui->tableWidget->setColumnCount(4);
+    ui->tableWidget->setHorizontalHeaderLabels({"Test Size (n)", "Single Core (µs)", "Multi Core (µs)", "iGPU (µs)"});
+	
     int rowCount = n->size();
     ui->tableWidget->setRowCount(rowCount);
     

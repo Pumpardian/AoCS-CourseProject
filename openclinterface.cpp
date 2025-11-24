@@ -1,6 +1,6 @@
 #include "openclinterface.h"
 
-void OpenCLInterface::initOpenCL()
+OpenCLInterface::OpenCLInterface()
 {
     cl_int ret;
     
@@ -47,22 +47,9 @@ void OpenCLInterface::initOpenCL()
     scatter_kernel = clCreateKernel(program, "scatter", &ret);
     
     opencl_initialized = true;
-    printf("OpenCL initialized - kernels pre-compiled\n");
-
-    char device_name[128];
-    clGetDeviceInfo(device, CL_DEVICE_NAME, sizeof(device_name), device_name, NULL);
-    printf("Using device: %s\n", device_name);
-
-    cl_uint max_compute_units;
-    clGetDeviceInfo(device, CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(max_compute_units), &max_compute_units, NULL);
-    printf("Compute units: %u\n", max_compute_units);
-
-    size_t max_work_group_size;
-    clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(max_work_group_size), &max_work_group_size, NULL);
-    printf("Max work group size: %zu\n", max_work_group_size);
 }
 
-void OpenCLInterface::cleanupOpenCL() 
+OpenCLInterface::~OpenCLInterface() 
 {
     if (opencl_initialized)
     {

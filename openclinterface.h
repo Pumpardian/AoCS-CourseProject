@@ -19,19 +19,10 @@ class OpenCLInterface
     cl_kernel histogram_kernel, prefix_sum_kernel, scatter_kernel;
     bool opencl_initialized = false;
 
-    void initOpenCL();
-    void cleanupOpenCL();
-
 public:
-    OpenCLInterface()
-    {
-        initOpenCL();
-    }
+    OpenCLInterface();
     
-    ~OpenCLInterface()
-    {
-        cleanupOpenCL();
-    }
+    ~OpenCLInterface();
 
     void countSort_iGPU(vector<unsigned long long>& arr);
 };

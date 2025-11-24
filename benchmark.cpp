@@ -76,7 +76,7 @@ void Benchmark::countSort_iGPU(vector<unsigned long long>& arr)
     openCLInterface->countSort_iGPU(arr);
 }
 
-long long Benchmark::test(void(Benchmark::*solution)(vector<unsigned long long>&), int size, int iterations, bool debug)
+long long Benchmark::test(void(Benchmark::*solution)(vector<unsigned long long>&), int size, int iterations)
 {
     vector<unsigned long long> arr = generateArray(size);
 
