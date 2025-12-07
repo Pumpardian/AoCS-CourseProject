@@ -95,34 +95,6 @@ long long Benchmark::test(void(Benchmark::*solution)(vector<unsigned long long>&
 
 void Benchmark::Run(int mode)
 {
-    if (testValues.empty())
-    {
-        for (long long n = 2; n < 100; n += 1)
-        {
-            testValues.push_back(n);
-        }
-        for (long long n = 100; n < 1000; n += 10)
-        {
-            testValues.push_back(n);
-        }
-        for (long long n = 1000; n < 10000; n += 100)
-        {
-            testValues.push_back(n);
-        }
-        for (long long n = 10000; n < 100000; n += 1000)
-        {
-            testValues.push_back(n);
-        }
-        for (long long n = 100000; n < 1000000; n += 10000)
-        {
-            testValues.push_back(n);
-        }
-        for (long long n = 1000000; n <= 5000000; n += 100000)
-        {
-            testValues.push_back(n);
-        }
-    }
-
     void (Benchmark::*function)(vector<unsigned long long>&);
     vector<long long> *results;
     switch (mode)

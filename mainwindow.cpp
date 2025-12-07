@@ -22,6 +22,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateChart()
 {
+	if (chartView != nullptr)
+    {
+        ui->verticalLayout_6->removeWidget(chartView);
+        delete chartView;
+    }
+	
     QChart *chart = new QChart();
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
@@ -74,20 +80,25 @@ void MainWindow::updateChart()
     chart->addAxis(xAxis, Qt::AlignBottom);
     chart->addAxis(yAxis, Qt::AlignLeft);
 
-    if (!sc->empty()) seriesSC->attachAxis(xAxis);
-    if (!sc->empty()) seriesSC->attachAxis(yAxis);
-    if (!mc->empty()) seriesMC->attachAxis(xAxis);
-    if (!mc->empty()) seriesMC->attachAxis(yAxis);
-    if (!igpu->empty()) seriesiGPU->attachAxis(xAxis);
-    if (!igpu->empty()) seriesiGPU->attachAxis(yAxis);
+    if (!sc->empty())
+	{
+		seriesSC->attachAxis(xAxis);
+		seriesSC->attachAxis(yAxis);
+	}
+    if (!mc->empty())
+	{
+		seriesMC->attachAxis(xAxis);
+		seriesMC->attachAxis(yAxis);
+	}
+    if (!igpu->empty())
+	{
+		seriesiGPU->attachAxis(xAxis);
+		seriesiGPU->attachAxis(yAxis);
+	}
 
     chart->setTitle("Benchmark Results");
 
-    if (chartView != nullptr)
-    {
-        ui->verticalLayout_6->removeWidget(chartView);
-        delete chartView;
-    }
+
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     ui->verticalLayout_6->addWidget(chartView);
